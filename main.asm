@@ -3,23 +3,36 @@ section .data
     welcome_len     equ $ - welcome
     hello_1         db  "Ola, "
     hello_1_len     equ $ - hello_1
-    hello_2         db  ", bem-vindo ao programa de CALC IA-32", 10
+    hello_2         db  ", bem-vindo ao programa de CALC IA-32", 0xA
     hello_2_len     equ $ - hello_2
     question        db  "Vai trabalhar com 16 ou 32 bits (digite 0 para 16, e 1 para 32):"
     question_len    equ $ - question
+    menu            db "ESCOLHA UMA OPÇÃO:", 0xA
+                    db "- 1: SOMA", 0xA
+                    db "- 2: SUBTRACAO", 0xA
+                    db "- 3: MULTIPLICACAO", 0xA
+                    db "- 4: DIVISAO", 0xA
+                    db "- 5: EXPONENCIACAO", 0xA
+                    db "- 6: MOD", 0xA
+                    db "- 7: SAIR", 0xA
+    menu_len        equ $ - menu
 section .bss
     name        resb 50
     name_len    resd 1
+    bit_size    resb 1
+    operation   resb 1
 section .text
 global _start
 
 _start:
 
+    ;print(welcome)
     push welcome_len
     push welcome
     call print
     add esp, 8
     
+    ;read(name)
     push 50
     push name
     call read
@@ -27,6 +40,7 @@ _start:
     mov [name_len], eax
     add esp, 8
 
+    ;print(hello)
     push hello_1_len
     push hello_1
     call print
@@ -42,39 +56,59 @@ _start:
     call print
     add esp, 8
 
+    ;print(question)
     push question_len
     push question
     call print
     add esp, 8
 
-    mov eax, 1                  ; sys_exit system call ID
-    mov ebx, 0                  ; Exit code 0
+    ;read(bit_size)
+    push 1
+    push bit_size
+    call read
+    add esp, 8
+
+    ;print(menu)
+    push menu_len
+    push menu
+    call print
+    add esp, 8
+
+    ;read(operation)
+    push 1
+    push operation
+    call read
+    add esp, 8
+
+    ;exit
+    mov eax, 1
+    mov ebx, 0
     int 80h
 
 print:
  
-    push ebp                    ; Save caller's base pointer[cite: 1]
-    mov ebp, esp                ; Set base pointer for this stack frame[cite: 1]
+    push ebp
+    mov ebp, esp
     
-    mov eax, 4                  ; op1 <- op2: Move system call ID for sys_write[cite: 1]
-    mov ebx, 1                  ; op1 <- op2: Move file handler (stdout)[cite: 1]
-    mov ecx, [ebp+8]            ; op1 <- op2: Load the string pointer from the stack[cite: 1]
-    mov edx, [ebp+12]           ; op1 <- op2: Load the string size from the stack[cite: 1] 
-    int 80h                     ; Performs the interrupt indicated by the operand[cite: 1]
+    mov eax, 4
+    mov ebx, 1
+    mov ecx, [ebp+8]
+    mov edx, [ebp+12]
+    int 80h
     
-    leave                       ; Restores the previous stack frame[cite: 1]
-    ret                         ; Jumps while popping the return address off the stack[cite: 1]
+    leave
+    ret
 
 read:
 
-    push ebp                    ; Save caller's base pointer[cite: 1]
-    mov ebp, esp                ; Set base pointer for this stack frame[cite: 1]
+    push ebp
+    mov ebp, esp
     
-    mov eax, 3                  ; op1 <- op2: Move system call ID for sys_read (3)[cite: 1]
-    mov ebx, 0                  ; op1 <- op2: Move file handler for stdin (0)[cite: 1]
-    mov ecx, [ebp+8]            ; op1 <- op2: Load the buffer pointer from the stack[cite: 1]
-    mov edx, [ebp+12]           ; op1 <- op2: Load the max buffer size from the stack[cite: 1] 
-    int 80h                     ; Performs the interrupt indicated by the operand[cite: 1]
+    mov eax, 3
+    mov ebx, 0
+    mov ecx, [ebp+8]
+    mov edx, [ebp+12]
+    int 80h
     
-    leave                       ; Restores the previous stack frame[cite: 1]
+    leave
     ret

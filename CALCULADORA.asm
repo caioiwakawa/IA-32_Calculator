@@ -3,6 +3,7 @@ global print
 
 extern ask_nums
 extern add_int
+extern sub_int
 
 section .data
     welcome         db  "Bem-vindo. Digite seu nome: "
@@ -102,7 +103,7 @@ menu_loop:
     je menu_add
 
     cmp al, '2'
-    je menu_add
+    je menu_sub
 
     cmp al, '3'
     je menu_add
@@ -316,20 +317,60 @@ menu_add:
     sub esp, 8              ; [ebp-4] = num1, [ebp-8] = num2
 
     ; ask_nums(ptr_num1, ptr_num2) -> preenche [ebp-4] e [ebp-8]
-    lea eax, [ebp-8]
+    mov eax, ebp
+    sub eax, 8
     push eax                ; ptr to num2
-    lea eax, [ebp-4]
+    mov eax, ebp
+    sub eax, 4
     push eax                ; ptr to num1 (ends up at ebp+8 inside ask_nums)
     call ask_nums
     add esp, 8
 
     ; add_int(ptr_num1, ptr_num2, ptr_result) -> [result_num] = num1+num2
     push dword result_num
-    lea eax, [ebp-8]
+    mov eax, ebp
+    sub eax, 8
     push eax                ; ptr to num2
-    lea eax, [ebp-4]
+    mov eax, ebp
+    sub eax, 4
     push eax                ; ptr to num1 (ends up at ebp+8 inside add_int)
     call add_int
+    add esp, 12
+
+    ; print_num(ptr_result) -> imprime [result_num]
+    push dword result_num
+    call print_num
+    add esp, 4
+
+    mov esp, ebp
+    pop ebp
+    jmp menu_loop
+
+menu_sub:
+
+    push ebp
+    mov ebp, esp
+    sub esp, 8              ; [ebp-4] = num1, [ebp-8] = num2
+
+    ; ask_nums(ptr_num1, ptr_num2) -> preenche [ebp-4] e [ebp-8]
+    mov eax, ebp
+    sub eax, 8
+    push eax                ; ptr to num2
+    mov eax, ebp
+    sub eax, 4
+    push eax                ; ptr to num1 (ends up at ebp+8 inside ask_nums)
+    call ask_nums
+    add esp, 8
+
+    ; add_int(ptr_num1, ptr_num2, ptr_result) -> [result_num] = num1+num2
+    push dword result_num
+    mov eax, ebp
+    sub eax, 8
+    push eax                ; ptr to num2
+    mov eax, ebp
+    sub eax, 4
+    push eax                ; ptr to num1 (ends up at ebp+8 inside add_int)
+    call sub_int
     add esp, 12
 
     ; print_num(ptr_result) -> imprime [result_num]

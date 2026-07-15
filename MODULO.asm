@@ -22,45 +22,43 @@ mod_int:
     mov ebp, esp
 
     ; Verifica o tamanho dos bits baseado na variável global
-    cmp byte [bit_size], '0'    ; Checa se é 16 bits[cite: 2]
+    cmp byte [bit_size], '0'    
     je .mod_int16
 
-    cmp byte [bit_size], '1'    ; Checa se é 32 bits[cite: 2]
+    cmp byte [bit_size], '1'    
     je .mod_int32
 
 .mod_int32:
     ; ----------------------------------------------------
     ; MODO 32 BITS (Usa registradores EAX, ECX, EDX)
     ; ----------------------------------------------------
-    mov ebx, [ebp+8]            ; EBX = Ponteiro do Número 1 (Dividendo)[cite: 2]
-    mov eax, [ebx]              ; EAX = Valor do Número 1 (32 bits)
+    mov ebx, [ebp+8]            
+    mov eax, [ebx]              
     
-    cdq                         ; Estende o sinal de EAX para EDX:EAX (Prepara para IDIV)
+    cdq                         
+    mov ebx, [ebp+12]           
+    mov ecx, [ebx]              
+    idiv ecx                    
     
-    mov ebx, [ebp+12]           ; EBX = Ponteiro do Número 2 (Divisor)[cite: 2]
-    mov ecx, [ebx]              ; ECX = Valor do Número 2
-    idiv ecx                    ; Divide EDX:EAX por ECX. Quociente -> EAX, Resto -> EDX.
-    
-    mov ebx, [ebp+16]           ; EBX = Ponteiro do Resultado[cite: 2]
-    mov [ebx], edx              ; Salva o QUOCIENTE de 32 bits na memória[cite: 2]
-    jmp .end_mod                ; Pula para o final da função
+    mov ebx, [ebp+16]           
+    mov [ebx], edx              
+    jmp .end_mod                
 
 .mod_int16:
     ; ----------------------------------------------------
     ; MODO 16 BITS (Usa registradores AX, CX, DX)
     ; ----------------------------------------------------
-    mov ebx, [ebp+8]            ; EBX = Ponteiro do Número 1 (Dividendo)[cite: 2]
-    mov ax, [ebx]               ; AX = Valor do Número 1 (16 bits)
+    mov ebx, [ebp+8]            
+    mov ax, [ebx]               
     
-    cwd                         ; Estende o sinal de AX para DX:AX (Prepara para IDIV)
+    cwd                         
+    mov ebx, [ebp+12]           
+    mov cx, [ebx]               
+    idiv cx                     
     
-    mov ebx, [ebp+12]           ; EBX = Ponteiro do Número 2 (Divisor)[cite: 2]
-    mov cx, [ebx]               ; CX = Valor do Número 2
-    idiv cx                     ; Divide DX:AX por CX. Quociente -> AX, Resto -> DX.
-    
-    mov ebx, [ebp+16]           ; EBX = Ponteiro do Resultado[cite: 2]
-    mov [ebx], dx               ; Salva o QUOCIENTE de 16 bits na memória[cite: 2]
+    mov ebx, [ebp+16]           
+    mov [ebx], dx               
 
 .end_mod:
-    leave                       ; Restaura o frame da pilha[cite: 2]
-    ret                         ; Retorna à rotina chamadora[cite: 2]
+    leave                       
+    ret                         

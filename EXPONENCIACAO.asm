@@ -26,10 +26,10 @@ exp_int:
     push ebx
 
     ; Verifica o tamanho dos bits baseado na variável global
-    cmp byte [bit_size], '0'    ; Checa se é 16 bits[cite: 2]
+    cmp byte [bit_size], '0'   
     je .exp_int16
 
-    cmp byte [bit_size], '1'    ; Checa se é 32 bits[cite: 2]
+    cmp byte [bit_size], '1'   
     je .exp_int32
 
 .exp_int32:
@@ -37,62 +37,62 @@ exp_int:
     ; MODO 32 BITS (Usa registradores EAX, EBX, ECX, EDX)
     ; ----------------------------------------------------
 
-    mov eax, 1                  ; EAX = Resultado
+    mov eax, 1                  
 
-    mov ebx, [ebp+12]           ; EBX = Ponteiro do Número 2 (expoente) [cite: 2]
-    mov ecx, [ebx]              ; ECX = Valor do Número 2
+    mov ebx, [ebp+12]           
+    mov ecx, [ebx]             
 
-    mov ebx, [ebp+8]            ; EBX = Ponteiro do Número 1 (base) [cite: 2]
-    mov ebx, [ebx]              ; EBX = Valor do Número 1 (32 bits)
+    mov ebx, [ebp+8]          
+    mov ebx, [ebx]            
 
 .exp_int32_loop:
     cmp ecx, 0
     je .end_int32_loop
 
-    imul ebx                    ; Multiplica EDX:EAX por EBX. Resposta -> EAX, Base -> EDX.
-    jo .overflow                ; Verifica se ocorreu overflow na flag OF
+    imul ebx                  
+    jo .overflow              
 
     dec ecx
     jmp .exp_int32_loop
     
 .end_int32_loop:
-    mov ebx, [ebp+16]           ; EBX = Ponteiro do Resultado[cite: 2]
-    mov [ebx], eax              ; Salva a resposta de 32 bits na memória[cite: 2]
-    jmp .end_exp                ; Pula para o final da função
+    mov ebx, [ebp+16]          
+    mov [ebx], eax             
+    jmp .end_exp              
 
 .exp_int16:
     ; ----------------------------------------------------
     ; MODO 16 BITS (Usa registradores AX, BX, CX, DX)
     ; ----------------------------------------------------
     
-    mov ax, 1                   ; AX = Resultado
+    mov ax, 1                 
 
-    mov ebx, [ebp+12]           ; EBX = Ponteiro do Número 2 [cite: 2]
-    mov cx, [ebx]               ; CX = Valor do Número 2
+    mov ebx, [ebp+12]          
+    mov cx, [ebx]             
 
-    mov ebx, [ebp+8]            ; EBX = Ponteiro do Número 1 [cite: 2]
-    mov bx, [ebx]               ; AX = Valor do Número 1 (16 bits)
+    mov ebx, [ebp+8]            
+    mov bx, [ebx]             
 
 .exp_int16_loop:
     cmp ecx, 0
     je .end_int16_loop
 
-    imul cx                     ; Multiplica DX:AX por CX. NUM1 -> AX, NUM2 -> DX.
-    jo .overflow                ; Verifica se ocorreu overflow na flag OF
+    imul cx                    
+    jo .overflow               
 
     dec cx
     jmp .exp_int16_loop
   
 .end_int16_loop:
-    mov ebx, [ebp+16]           ; EBX = Ponteiro do Resultado[cite: 2]
-    mov [ebx], ax               ; Salva a resposta de 16 bits na memória[cite: 2]
+    mov ebx, [ebp+16]         
+    mov [ebx], ax               
     jmp .end_exp
 
 .overflow:
-    mov ebx, [ebp+20]           ; ocorreu overflow
-    mov dword [ebx], 1          ; muda flag de overflow para 1
+    mov ebx, [ebp+20]         
+    mov dword [ebx], 1        
 
 .end_exp:
     pop ebx
-    leave                       ; Restaura o frame da pilha[cite: 2]
-    ret                         ; Retorna à rotina chamadora[cite: 2]
+    leave                      
+    ret                        

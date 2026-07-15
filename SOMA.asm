@@ -31,29 +31,29 @@ add_int:
     ; ----------------------------------------------------
     ; MODO 32 BITS (Usa registradores EAX)
     ; ----------------------------------------------------
-    mov ebx, [ebp+8]            ; EBX = Ponteiro do Número 1
-    mov eax, [ebx]              ; EAX = Valor do Número 1 (32 bits)
+    mov ebx, [ebp+8]            
+    mov eax, [ebx]              
     
-    mov ebx, [ebp+12]           ; EBX = Ponteiro do Número 2
-    add eax, [ebx]              ; EAX = EAX + Valor do Número 2 (Soma 32 bits)
+    mov ebx, [ebp+12]           
+    add eax, [ebx]              
     
-    mov ebx, [ebp+16]           ; EBX = Ponteiro do Resultado
-    mov [ebx], eax              ; Salva o resultado final de 32 bits na memória
-    jmp .end_add                ; Pula para o final da função
+    mov ebx, [ebp+16]           
+    mov [ebx], eax              
+    jmp .end_add                
 
 .add_int16:
     ; ----------------------------------------------------
     ; MODO 16 BITS (Usa registradores AX)
     ; ----------------------------------------------------
-    mov ebx, [ebp+8]            ; EBX = Ponteiro do Número 1
-    mov ax, [ebx]               ; AX = Valor do Número 1 (16 bits)
+    mov ebx, [ebp+8]            
+    mov ax, [ebx]               
     
-    mov ebx, [ebp+12]           ; EBX = Ponteiro do Número 2
-    add ax, [ebx]               ; AX = AX + Valor do Número 2 (Soma 16 bits)
+    mov ebx, [ebp+12]           
+    add ax, [ebx]               
     
-    mov ebx, [ebp+16]           ; EBX = Ponteiro do Resultado
-    mov [ebx], ax               ; Salva o resultado final de 16 bits na memória
+    mov ebx, [ebp+16]           
+    mov [ebx], ax               
 
 .end_add:
-    leave                       ; Restaura o frame da pilha
-    ret                         ; Retorna à rotina chamadora
+    leave                       
+    ret                         

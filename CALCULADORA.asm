@@ -91,7 +91,18 @@ _start:
     call read_str
     add esp, 8
 
+    jmp skip_enter
+
 menu_loop:
+
+    ;read(enter)
+    push 1
+    push result_num
+    call read_str
+    add esp, 8
+
+skip_enter:
+
     ;print(menu)
     push menu_len
     push menu

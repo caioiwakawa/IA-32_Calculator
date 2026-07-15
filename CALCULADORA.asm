@@ -5,7 +5,9 @@ extern ask_nums
 extern add_int
 extern sub_int
 extern div_int
+extern mul_int
 extern mod_int
+extern exp_int
 
 section .data
     welcome         db  "Bem-vindo. Digite seu nome: "
@@ -27,6 +29,8 @@ section .data
     menu_len        equ $ - menu
     newline         db  0xA
     newline_len     equ $ - newline
+    msgOverflow     db  "OCORREU OVERFLOW"
+    msgOverflow_len equ $ - msgOverflow
 section .bss
     name        resb 50
     name_len    resd 1
@@ -108,13 +112,13 @@ menu_loop:
     je menu_sub
 
     cmp al, '3'
-    je menu_add
+    je menu_mul
 
     cmp al, '4'
     je menu_div
 
     cmp al, '5'
-    je menu_add
+    je menu_exp
 
     cmp al, '6'
     je menu_mod
@@ -384,6 +388,51 @@ menu_sub:
     pop ebp
     jmp menu_loop
 
+menu_mul:
+
+    push ebp
+    mov ebp, esp
+    sub esp, 12              ; [ebp-4] = num1, [ebp-8] = num2, [ebp-12] = overflow
+
+    ; ask_nums(ptr_num1, ptr_num2) -> preenche [ebp-4] e [ebp-8]
+    mov eax, ebp
+    sub eax, 8
+    push eax                ; ptr to num2
+    mov eax, ebp
+    sub eax, 4
+    push eax                ; ptr to num1 (ends up at ebp+8 inside ask_nums)
+    call ask_nums
+    add esp, 8
+
+    mov dword [ebp-12], 0 ; overflow = 0
+
+    ; mul_int(ptr_num1, ptr_num2, ptr_result) -> [result_num] = num1*num2
+    mov eax, ebp
+    sub eax, 12
+    push eax                ; ptr to overflow
+   
+    push dword result_num
+    mov eax, ebp
+    sub eax, 8
+    push eax                ; ptr to num2
+    mov eax, ebp
+    sub eax, 4
+    push eax                ; ptr to num1 (ends up at ebp+8 inside mul_int)
+    call mul_int
+    add esp, 16
+
+    cmp dword [ebp-12], 1
+    je overflow
+
+    ; print_num(ptr_result) -> imprime [result_num]
+    push dword result_num
+    call print_num
+    add esp, 4
+
+    mov esp, ebp
+    pop ebp
+    jmp menu_loop
+
 menu_div:
 
     push ebp
@@ -455,3 +504,59 @@ menu_mod:
     mov esp, ebp
     pop ebp
     jmp menu_loop
+
+menu_exp:
+
+    push ebp
+    mov ebp, esp
+    sub esp, 12              ; [ebp-4] = num1, [ebp-8] = num2, [ebp-12] = overflow
+
+    ; ask_nums(ptr_num1, ptr_num2) -> preenche [ebp-4] e [ebp-8]
+    mov eax, ebp
+    sub eax, 8
+    push eax                ; ptr to num2
+    mov eax, ebp
+    sub eax, 4
+    push eax                ; ptr to num1 (ends up at ebp+8 inside ask_nums)
+    call ask_nums
+    add esp, 8
+
+    mov dword [ebp-12], 0 ; overflow = 0
+
+    ; exp_int(ptr_num1, ptr_num2, ptr_result) -> [result_num] = num1**num2
+    mov eax, ebp
+    sub eax, 12
+    push eax                ; ptr to overflow
+   
+    push dword result_num
+    mov eax, ebp
+    sub eax, 8
+    push eax                ; ptr to num2
+    mov eax, ebp
+    sub eax, 4
+    push eax                ; ptr to num1 (ends up at ebp+8 inside exp_int)
+    call exp_int
+    add esp, 16
+
+    cmp dword [ebp-12], 1
+    je overflow
+
+    ; print_num(ptr_result) -> imprime [result_num]
+    push dword result_num
+    call print_num
+    add esp, 4
+
+    mov esp, ebp
+    pop ebp
+    jmp menu_loop
+
+overflow:
+
+    ;print(overflow)
+    push msgOverflow_len
+    push msgOverflow
+    call print
+    add esp, 8
+
+    jmp exit
+    

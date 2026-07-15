@@ -38,5 +38,5 @@ ld -m elf_i386 -o calculadora CALCULADORA.o SOMA.o SUBTRACAO.o DIVISAO.o MODULO.
 ### Exemplo usando WSL no Windows
 
 ```bash
-wsl.exe -e bash -lc 'cd /mnt/c/Users/caioi/OneDrive/Área\ de\ Trabalho/coding/assembly-calc && nasm -f elf32 -o CALCULADORA.o CALCULADORA.asm && nasm -f elf32 -o SOMA.o SOMA.asm && nasm -f elf32 -o SUBTRACAO.o SUBTRACAO.asm && nasm -f elf32 -o DIVISAO.o DIVISAO.asm && nasm -f elf32 -o MODULO.o MODULO.asm && nasm -f elf32 -o MULTIPLICACAO.o MULTIPLICACAO.asm && nasm -f elf32 -o EXPONENCIACAO.o EXPONENCIACAO.asm && ld -m elf_i386 -o calculadora CALCULADORA.o SOMA.o SUBTRACAO.o DIVISAO.o MODULO.o MULTIPLICACAO.o EXPONENCIACAO.o && ./calculadora'
+wsl.exe -e bash -c 'nasm -f elf32 -o CALCULADORA.o CALCULADORA.asm && nasm -f elf32 -o SOMA.o SOMA.asm && nasm -f elf32 -o SUBTRACAO.o SUBTRACAO.asm && nasm -f elf32 -o DIVISAO.o DIVISAO.asm && nasm -f elf32 -o MODULO.o MODULO.asm && nasm -f elf32 -o MULTIPLICACAO.o MULTIPLICACAO.asm && nasm -f elf32 -o EXPONENCIACAO.o EXPONENCIACAO.asm && ld -m elf_i386 -o calculadora CALCULADORA.o SOMA.o SUBTRACAO.o DIVISAO.o MODULO.o MULTIPLICACAO.o EXPONENCIACAO.o && ./calculadora'
 ```
